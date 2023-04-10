@@ -1,12 +1,7 @@
 ;;; .emacs --- Emacs configuration file
 ;;; Commentary:
 ;;; Based on many different configs including that of Marc van der Sluys:
-;; Basic .emacs file for Operating systems (OPS) for Embedded-systems engineering (ESE)
-;; 2018-03-16, Marc van der Sluys,
-;;   HAN University of Applied sciences, Arnhem, The Netherlands
-;;   han.vandersluys.nl
-
-;; AUTHOR: Jochem Stevense
+;;; AUTHOR: Jochem Stevense
 
 ;; Added by Package.el.  This must come before configurations of installed packages.  Don't delete this line.
 ;; If you don't want it, just comment it out by adding a semicolon to the start of the line.
