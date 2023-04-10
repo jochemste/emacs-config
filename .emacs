@@ -59,9 +59,11 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t))
+;; (eval-when-compile
+;;   (require 'use-package))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MEMORY MANAGEMENT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -148,20 +150,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GENERAL DEV STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq whitespace-style '(face tabs empty trailing lines-tail
-                              tab-mark space-before-tab
-                              indentation space-after-tab))
+;; Whitespace
+(setq whitespace-style
+      '(face tabs empty trailing lines-tail
+             tab-mark space-before-tab
+             indentation space-after-tab))
+
 (setq whitespace-line-column 80)
 (global-whitespace-mode 1)
+
 (use-package yasnippet
   :ensure t
   :config
   (add-hook 'after-init-hook #'yas-global-mode))
-;; (require 'yasnippet)
-;; (yas-global-mode 1)
-;; (require 'flycheck)
-;; (global-flycheck-mode 1)
-(require 'lsp-mode)
+
+;(require 'lsp-mode)
+
 (setq user-full-name "Jochem Stevense"
       user-mail-address "jochemstevense@protonmail.com")
 
@@ -221,12 +225,6 @@
   :config
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
-;(require 'auto-complete)
-;(global-auto-complete-mode t)
-;(require 'auto-complete-config)
-;(ac-config-default)  ;;-  This line caused conflicts with Python Elpy AC
-                                        ;(setq ess-use-auto-complete 'script-only)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Git/project setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -273,7 +271,8 @@
   :config
   (helm-projectile-on))
 
-(require 'server)
+(use-package server)
+;;(require 'server)
 (if (not (server-running-p)) (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -535,16 +534,21 @@
 (add-hook 'elpy-mode-hook 'python-black-on-save-mode)
 
 ;; GO STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-hook 'go-mode-hook #'lsp)
-(add-hook 'go-mode-hook (lambda ()
+(use-package go-mode
+  :config
+  (add-hook 'go-mode-hook #'lsp)
+  (add-hook 'go-mode-hook (lambda ()
               (setq tab-width 2 indent-tabs-mode 1)
-              (add-hook 'before-save-hook 'gofmt-before-save)))
+              (add-hook 'before-save-hook 'gofmt-before-save))))
+
 
 ;; PLANTUML STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package plantuml-mode)
-(setq plantuml-executable-path "/usr/bin/plantuml")
-(setq plantuml-default-exec-mode 'executable)
-(add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
+(use-package plantuml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
+  (setq plantuml-executable-path "/usr/bin/plantuml")
+  (setq plantuml-default-exec-mode 'executable))
+
 
 ;; OTHER STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun command-line-diff (switch)
