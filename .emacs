@@ -36,7 +36,7 @@
  '(custom-safe-themes
    '("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" default))
  '(package-selected-packages
-   '(company-lsp lsp-ui helm-projectile helm projectile crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format ggtags dockerfile-mode yaml-mode blacken flycheck jedi-direx py-autopep8 elpygen realgud python-black lsp-mode rustic csv-mode markdown-mode auctex jupyter jedi anaconda-mode ## ac-c-headers auto-complete))
+   '(company-lsp lsp-ui helm-projectile helm projectile crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format ggtags dockerfile-mode yaml-mode blacken flycheck jedi-direx py-autopep8 elpygen realgud python-black rustic csv-mode markdown-mode auctex jupyter jedi anaconda-mode ## ac-c-headers auto-complete))
  '(show-paren-mode t))
 
 ;; custom-set-faces was added by Custom.
@@ -163,8 +163,6 @@
   :ensure t
   :config
   (add-hook 'after-init-hook #'yas-global-mode))
-
-;(require 'lsp-mode)
 
 (setq user-full-name "Jochem Stevense"
       user-mail-address "jochemstevense@protonmail.com")
@@ -345,8 +343,14 @@
 (straight-use-package '(company-lsp :type git :host github :repo "tigersoldier/company-lsp"))
 ;; End of workaround
 
-(use-package lsp-mode :commands lsp :ensure t)
-(use-package lsp-ui :commands lsp-ui-mode :ensure t)
+(use-package lsp-mode
+  :commands
+  lsp)
+(use-package lsp-ui
+  :commands
+  lsp-ui-mode
+  )
+
 (require 'company-lsp)
 (push 'company-lsp company-backends)
 ;(use-package company-lsp
@@ -385,31 +389,6 @@
 (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
 
 (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark);
-
-;; (defun insert-for-loop-c()
-;;   "Insert a C/C++ style for loop into current buffer."
-;;   (interactive)
-;;   (insert "for (int i=0; i<CHANGEME; i++) {\n}"))
-
-;; (defun insert-for-loop-range-c()
-;;   "Insert a C/C++ style for loop into current buffer."
-;;   (interactive)
-;;   (insert "for (const auto &el: CHANGEME) {\n}"))
-
-;; (defun insert-while-loop-c()
-;;   "Insert a C/C++ style for loop into current buffer."
-;;   (interactive)
-;;   (insert "while (CHANGEME) {\n}"))
-
-;; (defun insert-if-c()
-;;   "Insert a C/C++ style for loop into current buffer."
-;;   (interactive)
-;;   (insert "if (CHANGEME) {\n}"))
-
-;; (define-key global-map (kbd "C-c f") 'insert-for-loop-c)
-;; (define-key global-map (kbd "C-c r") 'insert-for-loop-c)
-;; (define-key global-map (kbd "C-c w") 'insert-while-loop-c)
-;; (define-key global-map (kbd "C-c i") 'insert-if-c)
 
 ;; Auto format on save
 (defun clang-format-save-hook-for-this-buffer ()
