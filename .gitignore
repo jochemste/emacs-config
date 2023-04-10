@@ -1,0 +1,6 @@
+# Ignore everything
+.emacs.d/*
+
+# except for these
+!.emacs.d/plugins
+!.emacs.d/fonts
