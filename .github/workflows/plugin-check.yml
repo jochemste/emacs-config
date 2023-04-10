@@ -1,0 +1,23 @@
+name: Check plugins
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  melpa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Emacs Lisp check
+        uses: leotaku/elisp-check@v1.3.1
+        with:
+          check: melpa
+          file: '.emacs.d/plugins/*.el'
+          ignore_warnings: false
+          warnings_as_errors: false
