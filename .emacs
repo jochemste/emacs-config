@@ -36,7 +36,7 @@
  '(custom-safe-themes
    '("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" default))
  '(package-selected-packages
-   '(company-lsp lsp-ui helm-projectile helm projectile crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format ggtags dockerfile-mode yaml-mode blacken flycheck jedi-direx py-autopep8 elpygen realgud python-black lsp-mode rustic csv-mode go-complete go-autocomplete go-mode markdown-mode auctex jupyter jedi anaconda-mode ## ac-c-headers auto-complete))
+   '(company-lsp lsp-ui helm-projectile helm projectile crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format ggtags dockerfile-mode yaml-mode blacken flycheck jedi-direx py-autopep8 elpygen realgud python-black lsp-mode rustic csv-mode markdown-mode auctex jupyter jedi anaconda-mode ## ac-c-headers auto-complete))
  '(show-paren-mode t))
 
 ;; custom-set-faces was added by Custom.
@@ -534,6 +534,8 @@
 (add-hook 'elpy-mode-hook 'python-black-on-save-mode)
 
 ;; GO STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package go-complete)
+(use-package go-autocomplete)
 (use-package go-mode
   :config
   (add-hook 'go-mode-hook #'lsp)
