@@ -36,7 +36,7 @@
  '(custom-safe-themes
    '("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" default))
  '(package-selected-packages
-   '(company-lsp lsp-ui helm-projectile helm projectile crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format ggtags dockerfile-mode yaml-mode blacken flycheck jedi-direx py-autopep8 elpygen realgud python-black rustic csv-mode markdown-mode auctex jupyter jedi anaconda-mode ## ac-c-headers auto-complete))
+   '(company-lsp lsp-ui helm-projectile helm projectile crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
  '(show-paren-mode t))
 
 ;; custom-set-faces was added by Custom.
@@ -269,9 +269,14 @@
   :config
   (helm-projectile-on))
 
-(use-package server)
-;;(require 'server)
-(if (not (server-running-p)) (server-start))
+(use-package server
+  :preface
+  (defun jsteven/ensure-server-running()
+    "Ensure the emacs client server is running."
+    (if (not (server-running-p))
+        (server-start)))
+  :config
+  (jsteven/ensure-server-running))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -392,14 +397,14 @@
 ;  :commands company-lsp
 ;  :config (push 'company-lsp company-backends)) ;; add company-lsp as a backend
 
-(use-package ccls
-  :ensure t
-  :config
-  (setq ccls-executable "ccls")
-  (setq lsp-prefer-flymake nil)
-  (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
-  :hook ((c-mode c++-mode objc-mode) .
-         (lambda () (require 'ccls) (lsp))))
+;; (use-package ccls
+;;   :ensure t
+;;   :config
+;;   (setq ccls-executable "ccls")
+;;   (setq lsp-prefer-flymake nil)
+;;   (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
+;;   :hook ((c-mode c++-mode objc-mode) .
+;;          (lambda () (require 'ccls) (lsp))))
 
 ;(require 'ac-c-headers)
 ;(add-hook 'c-mode-hook
@@ -408,39 +413,47 @@
 ;            (add-to-list 'ac-sources 'ac-source-c-header-symbols t)))
 ;(add-hook 'c-mode-hook 'lsp)
 ;
-;
-(require 'ggtags)
+                                        ;
 
-(add-hook 'c-mode-common-hook
+(use-package ggtags
+  :config
+  (add-hook 'c-mode-common-hook
       (lambda ()
         (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
           (ggtags-mode 1))))
-(define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
-(define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
-(define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
-(define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
-(define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
-(define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
+  (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+  (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+  (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+  (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+  (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+  (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
 
-(define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark);
+  (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark))
 
-;; Auto format on save
-(defun clang-format-save-hook-for-this-buffer ()
-  "Create a buffer local save hook."
-  (add-hook 'before-save-hook
-            (lambda ()
-              (when (locate-dominating-file "." ".clang-format")
-                (clang-format-buffer))
-              ;; Continue to save.
-              nil)
-            nil
-            ;; Buffer local hook.
-            t))
-
-(add-hook 'c-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
-(add-hook 'c++-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+(use-package clang-format
+  :preface
+  ;; Auto format on save
+  (defun clang-format-save-hook-for-this-buffer ()
+    "Create a buffer local save hook."
+    (add-hook 'before-save-hook
+              (lambda ()
+                (when (locate-dominating-file "." ".clang-format")
+                  (clang-format-buffer))
+                ;; Continue to save.
+                nil)
+              nil
+              ;; Buffer local hook.
+              t))
+  :config
+  (add-hook 'c-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+  (add-hook 'c++-mode-hook (lambda () (clang-format-save-hook-for-this-buffer))))
 
 ;; Interactively do things (IDO)
+;; (use-package ido
+;;   :config
+;;   (setq ido-enable-flex-matching t)
+;;   (setq ido-everywhere t)
+;;   (ido-mode 1))
 ;(require 'ido)
 ;(ido-mode t)
 
@@ -477,7 +490,7 @@
 (setq latex-math-preview-in-math-mode-p-func 'YaTeX-in-math-mode-p)
 
 (defun xelatex ()
-  "Compile latex with xelatex"
+  "Compile latex with xelatex."
   (interactive)
   (message (buffer-file-name))
   (async-shell-command
@@ -492,6 +505,14 @@
 ;; RUST STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package rustic
+  :preface
+  (defun rk/rustic-mode-hook ()
+    ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+    ;; save rust buffers that are not file visiting. Once
+    ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+    ;; no longer be necessary.
+    (when buffer-file-name
+      (setq-local buffer-save-without-query t)))
   :ensure
   :bind (:map rustic-mode-map
               ("M-j" . lsp-ui-imenu)
@@ -511,14 +532,6 @@
   ;; comment to disable rustfmt on save
   (setq rustic-format-on-save t)
   (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
-
-(defun rk/rustic-mode-hook ()
-  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
-  ;; save rust buffers that are not file visiting. Once
-  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
-  ;; no longer be necessary.
-  (when buffer-file-name
-    (setq-local buffer-save-without-query t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PYTHON STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -540,11 +553,12 @@
                           (set (make-local-variable 'company-backends)
                                '((elpy-company-backend :with company-yasnippet))))))
     :init (elpy-enable)
-    :config (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
     (setq elpy-shell-echo-output nil)
     (setq elpy-rpc-python-command "python3.10")
-    (setq elpy-rpc-timeout 2))
-(add-hook 'elpy-mode-hook 'python-black-on-save-mode)
+    (setq elpy-rpc-timeout 2)
+    (add-hook 'elpy-mode-hook 'python-black-on-save-mode))
 
 ;; GO STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package go-complete)
@@ -578,6 +592,10 @@
 (setq ediff-split-window-function 'split-window-horizontally)
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+(use-package dockerfile-mode)
+(use-package yaml-mode)
+(use-package jupyter)
 
 (provide '.emacs)
 ;;; .emacs ends here
