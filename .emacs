@@ -16,7 +16,7 @@
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/packages/"))
+(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 (package-initialize)
 
