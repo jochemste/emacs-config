@@ -36,7 +36,7 @@
  '(custom-safe-themes
    '("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" default))
  '(package-selected-packages
-   '(crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
+   '(helm-gtags crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
  '(show-paren-mode t))
 
 ;; custom-set-faces was added by Custom.
@@ -266,7 +266,33 @@
 (use-package helm-projectile
   :ensure t
   :config
-  (helm-projectile-on))
+  (helm-projectile-on)
+  (setq projectile-completion-system 'helm)
+  (setq projectile-indexing-method 'alien)
+  )
+
+(use-package helm-gtags
+  :ensure t
+  :config
+  (setq helm-gtags-ignore-case t)
+  (setq helm-gtags-auto-update t)
+  (setq helm-gtags-use-input-at-cursor t)
+  (setq helm-gtags-pulse-at-cursor t)
+  (setq helm-gtags-prefix-key "\C-cg")
+  (setq helm-gtags-suggested-key-mapping t)
+  (add-hook 'dired-mode-hook 'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+  (define-key helm-gtags-mode-map (kbd "C-c g a")
+    'helm-gtags-tags-in-this-function)
+  (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+  (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+  (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+  )
 
 (use-package server
   :preface
@@ -361,7 +387,9 @@
   (setq lsp-enable-snippet nil)
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
   (setq lsp-idle-delay 0.5)
-  (setq lsp-use-plist))
+  ;;(setq lsp-use-plist t)
+  (add-to-list 'lsp-file-watch-ignored-directories
+               "[/\\\\]build\\'"))
 
 (use-package lsp-ui
   :commands
