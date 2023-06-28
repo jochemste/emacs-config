@@ -271,27 +271,32 @@
   (setq projectile-indexing-method 'alien)
   )
 
+(setq helm-gtags-prefix-key "\C-c g") ; Must be set before loading helm-gtags
 (use-package helm-gtags
   :ensure t
-  :config
-  (setq helm-gtags-ignore-case t)
-  (setq helm-gtags-auto-update t)
-  (setq helm-gtags-use-input-at-cursor t)
-  (setq helm-gtags-pulse-at-cursor t)
-  (setq helm-gtags-prefix-key "\C-cg")
-  (setq helm-gtags-suggested-key-mapping t)
+  :init
+  (progn
+    (setq helm-gtags-ignore-case t
+          helm-gtags-auto-update t
+          helm-gtags-use-input-at-cursor t
+          helm-gtags-pulse-at-cursor t
+          helm-gtags-suggested-key-mapping t))
+
   (add-hook 'dired-mode-hook 'helm-gtags-mode)
   (add-hook 'eshell-mode-hook 'helm-gtags-mode)
   (add-hook 'c-mode-hook 'helm-gtags-mode)
   (add-hook 'c++-mode-hook 'helm-gtags-mode)
   (add-hook 'asm-mode-hook 'helm-gtags-mode)
-  (define-key helm-gtags-mode-map (kbd "C-c g a")
-    'helm-gtags-tags-in-this-function)
-  (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-  (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-  (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
+  ;; helm-gtags key bindings
+  (with-eval-after-load 'helm-gtags
+    (define-key helm-gtags-mode-map (kbd "C-c g a")
+      'helm-gtags-tags-in-this-function)
+    (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+    (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+    (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+    (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+    (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
   )
 
 (use-package server
@@ -370,26 +375,29 @@
           ) . lsp-deferred)
   :commands lsp
   :config
-  (setq lsp-auto-guess-root t)
-  (setq lsp-log-io nil)
-  (setq lsp-restart 'auto-restart)
-  (setq lsp-enable-symbol-highlighting nil)
-  (setq lsp-enable-on-type-formatting nil)
-  (setq lsp-signature-auto-activate nil)
-  (setq lsp-signature-render-documentation nil)
-  (setq lsp-eldoc-hook nil)
-  (setq lsp-modeline-code-actions-enable nil)
-  (setq lsp-modeline-diagnostics-enable nil)
-  (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-semantic-tokens-enable nil)
-  (setq lsp-enable-folding nil)
-  (setq lsp-enable-imenu nil)
-  (setq lsp-enable-snippet nil)
-  (setq read-process-output-max (* 1024 1024)) ;; 1MB
-  (setq lsp-idle-delay 0.5)
-  ;;(setq lsp-use-plist t)
+  (progn
+    (setq lsp-auto-guess-root t
+          lsp-log-io nil
+          lsp-restart 'auto-restart
+          lsp-enable-symbol-highlighting nil
+          lsp-enable-on-type-formatting nil
+          lsp-signature-auto-activate nil
+          lsp-signature-render-documentation nil
+          lsp-eldoc-hook nil
+          lsp-modeline-code-actions-enable nil
+          lsp-modeline-diagnostics-enable nil
+          lsp-headerline-breadcrumb-enable nil
+          lsp-semantic-tokens-enable nil
+          lsp-enable-folding nil
+          lsp-enable-imenu nil
+          lsp-enable-snippet nil
+          read-process-output-max (* 1024 1024) ;; 1MB
+          lsp-idle-delay 0.5))
+
+  ;; Ignore the build directory from cmake builds (not sure if a good idea yet)
   (add-to-list 'lsp-file-watch-ignored-directories
-               "[/\\\\]build\\'"))
+               "[/\\\\]build\\'")
+  )
 
 (use-package lsp-ui
   :commands
@@ -400,41 +408,10 @@
   (setq lsp-ui-doc-include-signature t)
   (setq lsp-ui-doc-border (face-foreground 'default))
   (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-sideline-delay 0.05))
+  (setq lsp-ui-sideline-delay 0.05)
+  )
 
-;; (use-package ccls
-;;   :ensure t
-;;   :config
-;;   (setq ccls-executable "ccls")
-;;   (setq lsp-prefer-flymake nil)
-;;   (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
-;;   :hook ((c-mode c++-mode objc-mode) .
-;;          (lambda () (require 'ccls) (lsp))))
-
-;(require 'ac-c-headers)
-;(add-hook 'c-mode-hook
-;          (lambda ()
-;            (add-to-list 'ac-sources 'ac-source-c-headers)
-;            (add-to-list 'ac-sources 'ac-source-c-header-symbols t)))
-;(add-hook 'c-mode-hook 'lsp)
-;
-                                        ;
-
-;; (use-package ggtags
-;;   :config
-;;   (add-hook 'c-mode-common-hook
-;;       (lambda ()
-;;         (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-;;           (ggtags-mode 1))))
-;;   (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
-;;   (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
-;;   (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
-;;   (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
-;;   (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
-;;   (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
-
-;;   (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark))
-
+;; Do auto formatting on save using clang-format
 (use-package clang-format
   :preface
   ;; Auto format on save
@@ -451,16 +428,8 @@
               t))
   :config
   (add-hook 'c-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
-  (add-hook 'c++-mode-hook (lambda () (clang-format-save-hook-for-this-buffer))))
-
-;; Interactively do things (IDO)
-;; (use-package ido
-;;   :config
-;;   (setq ido-enable-flex-matching t)
-;;   (setq ido-everywhere t)
-;;   (ido-mode 1))
-;(require 'ido)
-;(ido-mode t)
+  (add-hook 'c++-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MARKDOWN STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -595,8 +564,6 @@
   (setq plantuml-executable-path "/usr/bin/plantuml")
   (setq plantuml-default-exec-mode 'executable))
 
-
-
 ;; OTHER STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun command-line-diff (switch)
   "Perform diff on two files SWITCH."
@@ -608,12 +575,13 @@
 
 ; make ediff split horizontally
 (setq ediff-split-window-function 'split-window-horizontally)
-
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (use-package dockerfile-mode)
 (use-package yaml-mode)
 (use-package jupyter)
+
+(put 'upcase-region 'disabled nil) ; Enable upcase-region
 
 (provide '.emacs)
 ;;; .emacs ends here
