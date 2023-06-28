@@ -36,7 +36,7 @@
  '(custom-safe-themes
    '("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" default))
  '(package-selected-packages
-   '(company-lsp crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
+   '(crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
  '(show-paren-mode t))
 
 ;; custom-set-faces was added by Custom.
@@ -65,7 +65,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MEMORY MANAGEMENT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq gc-cons-threshold 50000000)
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENCODING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -328,23 +330,6 @@
  'linux-kernel)
 ;; END KERNEL C STUFF ;;
 
-;; Workaround to use company-lsp
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(straight-use-package '(company-lsp :type git :host github :repo "tigersoldier/company-lsp"))
-;; End of workaround
-
 (use-package lsp-mode
   :hook ((c-mode          ; clangd
           c++-mode        ; clangd
@@ -375,7 +360,9 @@
   (setq lsp-enable-imenu nil)
   (setq lsp-enable-snippet nil)
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
-  (setq lsp-idle-delay 0.5))
+  (setq lsp-idle-delay 0.5)
+  (setq lsp-use-plist))
+
 (use-package lsp-ui
   :commands
   lsp-ui-mode
@@ -386,13 +373,6 @@
   (setq lsp-ui-doc-border (face-foreground 'default))
   (setq lsp-ui-sideline-show-code-actions t)
   (setq lsp-ui-sideline-delay 0.05))
-
-(require 'company-lsp)
-(push 'company-lsp company-backends)
-;(use-package company-lsp
-;  :ensure t
-;  :commands company-lsp
-;  :config (push 'company-lsp company-backends)) ;; add company-lsp as a backend
 
 ;; (use-package ccls
 ;;   :ensure t
@@ -412,20 +392,20 @@
 ;
                                         ;
 
-(use-package ggtags
-  :config
-  (add-hook 'c-mode-common-hook
-      (lambda ()
-        (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-          (ggtags-mode 1))))
-  (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
-  (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
-  (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
-  (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
-  (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
-  (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
+;; (use-package ggtags
+;;   :config
+;;   (add-hook 'c-mode-common-hook
+;;       (lambda ()
+;;         (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+;;           (ggtags-mode 1))))
+;;   (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+;;   (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+;;   (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+;;   (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+;;   (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+;;   (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
 
-  (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark))
+;;   (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark))
 
 (use-package clang-format
   :preface
