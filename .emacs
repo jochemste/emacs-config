@@ -552,9 +552,14 @@
   (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
   (setq org-plantuml-jar-path (expand-file-name "/usr/share/plantuml/plantuml.jar"))
   (setq org-startup-with-inline-images t)
+
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((plantuml . t)))
+
+  (add-hook 'before-save-hook (lambda ()
+                               (org-ctrl-c-ctrl-c)
+                               (org-redisplay-inline-images)))
   )
 
 ;; PLANTUML STUFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;
