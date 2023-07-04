@@ -251,7 +251,6 @@
   ("M-y" . helm-show-kill-ring)
   ("C-x b" . helm-mini)
   :config
-  (require 'helm-config)
   (helm-mode 1)
   (setq helm-split-window-inside-p t
     helm-move-to-line-cycle-in-source t)
