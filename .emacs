@@ -311,6 +311,13 @@
 ;; C STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package which-func
+  :ensure t
+  :init
+  (add-hook 'c-mode-hook 'which-function-mode)
+  (add-hook 'c++-mode-hook 'which-function-mode)
+  )
+
 ;; KERNEL C STUFF ;;
 (defun c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces"
