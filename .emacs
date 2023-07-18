@@ -137,8 +137,6 @@
               indent-tabs-mode nil)
 ;; Set key to kill buffer
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
-;; Clean accidental whitespaces
-(add-hook 'before-save-hook 'whitespace-cleanup)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENABLE SOME PACKAGES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -150,13 +148,19 @@
 ;; GENERAL DEV STUFF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Whitespace
-(setq whitespace-style
-      '(face tabs empty trailing lines-tail
-             tab-mark space-before-tab
-             indentation space-after-tab))
+(use-package whitespace
+  :ensure t
+  :config
+  (setq whitespace-style
+        '(face tabs empty trailing lines-tail
+               tab-mark space-before-tab
+               indentation space-after-tab))
 
-(setq whitespace-line-column 80)
-(global-whitespace-mode 1)
+  (setq whitespace-line-column 100)
+  ;; Clean accidental whitespaces
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (global-whitespace-mode 1)
+  )
 
 (use-package yasnippet
   :ensure t
