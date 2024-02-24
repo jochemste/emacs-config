@@ -36,7 +36,7 @@
  '(custom-safe-themes
    '("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" default))
  '(package-selected-packages
-   '(lsp-ui lsp-mode helm-gtags crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
+   '(lsp-mode helm-gtags crux smartparens doom-themes cmake-mode company-c-headers astyle format-all clang-format+ clang-format blacken python-black auctex ## ac-c-headers auto-complete))
  '(show-paren-mode t))
 
 ;; custom-set-faces was added by Custom.
