@@ -577,6 +577,7 @@
 (use-package org
   :mode (("\\.org$" . org-mode))
   :init
+  (setq org-support-shift-select t) ;; enable shift selection in org-mode
   (setq plantuml-default-exec-mode 'jar)
   (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
   (setq org-plantuml-jar-path (expand-file-name "/usr/share/plantuml/plantuml.jar"))
