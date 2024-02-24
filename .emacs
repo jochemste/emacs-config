@@ -177,8 +177,8 @@
   :config
   (add-hook 'after-init-hook #'yas-global-mode))
 
-(setq user-full-name "Jochem Stevense"
-      user-mail-address "jochemstevense@protonmail.com")
+(setq user-full-name "Your Name"
+      user-mail-address "yourmail@example.com")
 
 ;; Insert/delete and highlight braces quotes and such in pairs
 (use-package smartparens
